@@ -33,6 +33,7 @@ async function loadBlogPost(id) {
         
     } finally {
         loading.value = false
+        
     }
 }
 
