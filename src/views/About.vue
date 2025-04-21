@@ -4,6 +4,12 @@
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onBeforeRouteLeave } from 'vue-router';
+
+onBeforeRouteLeave((to, from) => {
+    window.alert('Don\'t forget to like us on facebook!')
+})
+</script>
 
 <style lang="scss" scoped></style>
