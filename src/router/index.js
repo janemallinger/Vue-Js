@@ -1,15 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Import the components that we want to route to
-import Home from '@/views/Home.vue'
-import BlogPosts from '@/views/BlogPosts.vue'
-import About from '@/views/About.vue'
-import BlogPost from '@/views/Blogpost.vue'
-import BlogPostsGreeting from '@/views/BlogPostsGreeting.vue'
-import Ads from '@/views/Ads.vue'
-import Login from '@/views/Login.vue'
-import BlogPost from '@/views/Blogpost.vue'
-import MainLayout from '@/views/MainLayout.vue'
 import { isAuthenticated } from '@/apis/auth'
 
 // Create a router instance
@@ -33,24 +24,34 @@ const router = createRouter({
     {
       path: '/',
       name: 'mainLayout',
-      component: MainLayout,
+      component: () => import ('@/views/MainLayout.vue'),
       redirect: { name: 'home' },
       children: [
-        { path: '/home', name: 'home', component: Home, meta: {requiresAuth: false} },
+        { 
+          path: '/home', 
+          name: 'home', 
+          component: () => import('@/views/Home.vue'), 
+          meta: {requiresAuth: false} },
         { 
           path: '/blogPosts',
           name: 'blogPosts', 
-          component: BlogPosts, 
+          component: () => import('@/views/BlogPosts.vue'), 
           meta: {
             enterAnimation: 'animate__animated animate__bounceIn',
             leaveAnimation: 'animate__animated animate__counceOut',
           },
           redirect: { name: 'blogPostsGreeting' },
           children: [
-            { path: '', name: 'blogPostsGreeting', component: BlogPostsGreeting, meta: { requiresAuth: false } },
-            { path: '/blogPosts/:id(\\d+)', name: 'blogPost', components: {
-              default: BlogPost,
-              sidebar: Ads,
+            { 
+              path: '', 
+              name: 'blogPostsGreeting', 
+              component: () => import('@/views/BlogPostsGreeting.vue'), 
+              meta: { requiresAuth: false } },
+            { path: '/blogPosts/:id(\\d+)', 
+              name: 'blogPost', 
+              components: {
+                default: () => import('@/views/Blogpost.vue'),
+                sidebar: () => import('@/views/Ads.vue'),
               }, 
               meta: { 
                 requiresAuth: true, 
@@ -59,19 +60,23 @@ const router = createRouter({
             },
           ], 
         },
-        { path: '/about', name: 'about', component: About,  meta: { requiresAuth: false } },
+        { 
+          path: '/about', 
+          name: 'about', 
+          component: () => import('@/views/About.vue'),  
+          meta: { requiresAuth: false } },
       ],
     },
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: () => import('@/views/Login.vue'),
       meta: { requiresAuth: false }
     },
     { 
       path: '/:pathMatch(.*)*', 
       name: 'notFound', 
-      component: NotFound,
+      component: () => import('@/views/NotFound.vue'),
       meta: { requiresAuth: false }
     },
   ],
