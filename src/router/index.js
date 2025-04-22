@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Import the components that we want to route to
-import { isAuthenticated } from '@/apis/auth'
+import { getUserRole, isAuthenticated } from '@/apis/auth'
+
 
 // Create a router instance
 const router = createRouter({
@@ -24,19 +25,22 @@ const router = createRouter({
     {
       path: '/',
       name: 'mainLayout',
-      component: () => import ('@/views/MainLayout.vue'),
+      component: () => import('@/views/MainLayout.vue'),
       redirect: { name: 'home' },
       children: [
         { 
           path: '/home', 
           name: 'home', 
           component: () => import('@/views/Home.vue'), 
-          meta: {requiresAuth: false} },
+          meta: {requiresAuth: false, title: 'Home', isNavLink: true },
+        },
         { 
           path: '/blogPosts',
           name: 'blogPosts', 
           component: () => import('@/views/BlogPosts.vue'), 
           meta: {
+            title: 'Blog Posts',
+            isNavLink: true,
             enterAnimation: 'animate__animated animate__bounceIn',
             leaveAnimation: 'animate__animated animate__counceOut',
           },
@@ -64,7 +68,8 @@ const router = createRouter({
           path: '/about', 
           name: 'about', 
           component: () => import('@/views/About.vue'),  
-          meta: { requiresAuth: false } },
+          meta: { requiresAuth: false , title: 'About', isNavLink: true } 
+        },
       ],
     },
     {
@@ -87,6 +92,11 @@ router.beforeEach((to, from) => {
   if(to.meta.requiresAuth && !isAuthenticated.value) {
 
     return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  const userRole = getUserRole()
+  if (to.meta.roles && !to.meta.roles.includes(userRole)) {
+    return { name: 'home' }
   }
 })
 
